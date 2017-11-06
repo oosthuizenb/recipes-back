@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from rest_framework import routers
+from rest_framework_jwt.views import obtain_jwt_token
 from api import views
 from django.contrib import admin
 
@@ -23,5 +24,6 @@ router.register(r'recipes', views.RecipeViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^api/', include(router.urls))
+    url(r'^api/', include(router.urls)),
+    url(r'^api-token-auth/', obtain_jwt_token)
 ]
