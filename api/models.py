@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 class Recipe(models.Model):
-    owner = models.ForeignKey('auth.User', related_name='recipes', default=1)
+    owner = models.ForeignKey('auth.User', models.CASCADE, related_name='recipes', default=1)
     title = models.CharField(max_length=80)
     serves = models.IntegerField()
     ingredients = models.TextField(help_text='seperate with comma')
