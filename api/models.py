@@ -9,6 +9,7 @@ class Recipe(models.Model):
     method = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    image = models.ImageField(upload_to='images/', null=True)
 
     def __str__(self):
         return self.title
