@@ -1,9 +1,9 @@
 from .models import Recipe, Image
 from rest_framework import viewsets, status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.parsers import FormParser, MultiPartParser
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from .permissions import IsOwnerOrReadOnly
 from .serializers import RecipeSerializer, ImageSerializer
 
@@ -29,12 +29,13 @@ class FeedRecipeViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = RecipeSerializer
 
 @api_view(['GET', 'POST'])
+@permission_classes((IsAuthenticated, ))
 def image_list(request):
     """
     List all the user's images or create a new image
     """
     if request.method == 'GET':
-        images = Image.objects.all()
+        images = Image.objects.filter(owner=request.user)
         serializer = ImageSerializer(images)
         return Response(serializer.data)
     elif request.method == 'POST':
@@ -45,6 +46,7 @@ def image_list(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes((IsAuthenticated, IsOwnerOrReadOnly))
 def image_detail(request, pk):
     """
     Retrieve, update or delete an image.
