@@ -12,6 +12,8 @@ router.register(r'feed', views.FeedRecipeViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^api/images/$', views.image_list),
+    url(r'^api/images/(?P<pk>[0-9]+)/$', views.image_detail),
     url(r'^api/', include(router.urls)),
     url(r'^api-token-auth/', obtain_jwt_token),
     url(r'^api-token-refresh/', refresh_jwt_token),

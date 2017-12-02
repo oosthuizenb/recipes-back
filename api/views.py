@@ -1,9 +1,11 @@
-from .models import Recipe
-from rest_framework import viewsets
+from .models import Recipe, Image
+from rest_framework import viewsets, status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .permissions import IsOwnerOrReadOnly
-from .serializers import RecipeSerializer
+from .serializers import RecipeSerializer, ImageSerializer
 
 class RecipeViewSet(viewsets.ModelViewSet):
     """
@@ -25,3 +27,38 @@ class FeedRecipeViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
+
+@api_view(['GET', 'POST'])
+def image_list(request):
+    """
+    List all the user's images or create a new image
+    """
+    if request.method == 'GET':
+        images = Image.objects.all()
+        serializer = ImageSerializer(images)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = ImageSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(owner=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def image_detail(request, pk):
+    """
+    Retrieve, update or delete an image.
+    """
+    try:
+        image = Image.objects.get(pk=pk)
+    except Image.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = ImageSerializer(image)
+        return Response(serializer.data)
+    elif request.method == 'PUT':
+        serializer = ImageSerializer(image, data=request.data, partial=True)
+    elif request.method == 'DELETE':
+        image.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
