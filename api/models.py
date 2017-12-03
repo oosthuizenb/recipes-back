@@ -1,5 +1,6 @@
+from django.conf import settings
 from django.db import models
-
+import os
 
 class Recipe(models.Model):
     owner = models.ForeignKey('auth.User', models.CASCADE, related_name='recipes', default=1)
@@ -25,6 +26,10 @@ class Image(models.Model):
 
     def __str__(self):
         return self.image
+
+    def delete(self, *args, **kwargs):
+        os.remove(os.path.join(settings.MEDIA_ROOT, self.image.name))
+        super(Image, self).delete(*args, **kwargs)
 
     class Meta:
         ordering = ['-updated', '-timestamp']

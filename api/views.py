@@ -60,7 +60,7 @@ def image_detail(request, pk):
         serializer = ImageSerializer(image)
         return Response(serializer.data)
     elif request.method == 'PUT':
-        serializer = ImageSerializer(image, data=request.data, partial=True)
+        serializer = ImageSerializer(image, data=request.data)
     elif request.method == 'DELETE':
         image.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
