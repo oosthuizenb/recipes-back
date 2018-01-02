@@ -8,11 +8,10 @@ name = "pypi"
 [packages]
 
 djangorestframework-jwt = "*"
-django = "*"
+Django = "*"
 djangorestframework = "*"
 django-cors-headers = "*"
-django-silk = "*"
-pillow = "*"
+Pillow = "*"
 
 
 [dev-packages]
